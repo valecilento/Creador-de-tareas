@@ -1,5 +1,5 @@
 import { createTask } from "./addTask.js";
-import { uniqueDates } from "./services/date.js";
+import { uniqueDates, orderDates } from "./services/date.js";
 import dateElement from "./dateElement.js";
 
 export const readTask = () => {
@@ -7,14 +7,21 @@ export const readTask = () => {
 
    const taskList = JSON.parse(localStorage.getItem("tasks")) || []; //esto devuelve un objeto en formato JSON, para poder manipularlo usamos JSON.parse
    const dates = uniqueDates(taskList);
+   orderDates(dates);
 
-   
    dates.forEach(date => {
-      console.log(date);
+      const dateMoment = moment(date, "DD/MM/YYYY");
+      list.appendChild(dateElement(date)); 
+      taskList.forEach((task) => {  //para recorrer las variable de tipo arreglo
+         const taskdate = moment(task.dateFormat, "DD/MM/YYYY");
+
+         const diff = dateMoment.diff(taskdate);            //compara las diferentes fechas de cada tarea
+         if (diff === 0) {   //si las fechas de cada tarea coinciden
+            list.appendChild(createTask(task));   //recibe cada una de las tareas que existen en el arreglo y lo envía al createTask donde ejecuta y devuelve esa función
+         }
+         
+      });
    });
 
-   taskList.forEach((task) => {  //para recorrer las variable de tipo arreglo
-      list.appendChild(dateElement(task.dateFormat)); 
-      list.appendChild(createTask(task));   //recibe cada una de las tareas que existen en el arreglo y lo envía al createTask donde ejecuta y devuelve esa función
-   });
+  
 };

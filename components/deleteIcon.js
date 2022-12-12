@@ -1,12 +1,19 @@
-const deleteIcon = () => {
+import {readTask} from "./readTask.js";
+
+const deleteIcon = (id) => {
    const i = document.createElement("i");
    i.classList.add("fas", "fa-trash-alt", "trashIcon", "icon");
-   i.addEventListener("click", deleteTask);                      //tiene dos parámetros, click y la función deleteTask
+   i.addEventListener("click", () => deleteTask(id));           //tiene dos parámetros, click y la función deleteTask
    return i;
 }
-const deleteTask = (event) => {
-   const parent = event.target.parentElement;  //los toma por los padres, como elementos independientes
-   parent.remove();                              //elimina la tarjeta seleccionada
+const deleteTask = (id) => {
+   const li = document.querySelector("[data-list]");
+   const tasks = JSON.parse(localStorage.getItem("tasks"));  
+   const index = tasks.findIndex( (item) => item.id === id);       
+   tasks.splice(index, 1);
+   li.innerHTML = "";
+   localStorage.setItem("tasks", JSON.stringify(tasks));
+   readTask();
 }
 
-export default deleteIcon
+export default deleteIcon;
